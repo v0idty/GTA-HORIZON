@@ -5,7 +5,6 @@
 class UStaticMeshComponent;
 class USpringArmComponent;
 class UCameraComponent;
-
 UCLASS()
 class GTAHORIZON_API AHorizonVehicle : public APawn
 {
@@ -15,6 +14,7 @@ public:
     virtual void Tick(float DeltaSeconds) override;
     virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
     UStaticMeshComponent* GetVehicleBody() const { return VehicleBody; }
+    void SetTouchControls(float InThrottle, float InSteering, float InBrake);
 private:
     void SetThrottle(float Value);
     void SetSteering(float Value);
