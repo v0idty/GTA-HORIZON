@@ -45,7 +45,7 @@ void AHorizonCity::AddBlock(FName Name, FVector Location, FVector Scale, FLinear
 }
 void AHorizonCity::BuildCityBlockout()
 {
-    AddBlock(TEXT("City Ground"), FVector(0, 0, -120), FVector(150, 150, 1), FLinearColor(0.12f,0.15f,0.18f));
+    AddBlock(TEXT("City Ground"), FVector(0, 0, -120), FVector(250, 280, 1), FLinearColor(0.12f,0.15f,0.18f));
     AddBlock(TEXT("Main Boulevard"), FVector(0, 0, -40), FVector(9, 140, .12f), FLinearColor(.035f,.04f,.055f));
     AddBlock(TEXT("Beachfront"), FVector(-10500, 8500, -65), FVector(55, 38, .2f), FLinearColor(.67f,.53f,.34f));
     AddBlock(TEXT("Ocean"), FVector(-16000, 13000, -180), FVector(90, 80, .2f), FLinearColor(.015f,.15f,.24f));
