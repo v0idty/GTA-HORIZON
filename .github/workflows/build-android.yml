@@ -1,41 +1,41 @@
-name: GTA HORIZON - Android APK
-
+name: GTA HORIZON - Unreal Engine 5.8 Android
 on:
   workflow_dispatch:
-  push:
-    branches: [ main ]
-    paths:
-      - 'Assets/**'
-      - 'Packages/**'
-      - 'ProjectSettings/**'
-      - '.github/workflows/build-android.yml'
-
 permissions:
   contents: read
-
 jobs:
   build-android:
-    runs-on: ubuntu-latest
+    # A licensed UE 5.8 install and Android toolchain must already exist on this runner.
+    # GitHub-hosted runners do not include Unreal Engine.
+    runs-on: [self-hosted, Windows, X64, ue-5.8, android]
+    timeout-minutes: 180
     steps:
       - uses: actions/checkout@v4
-      - name: Build Android APK with Unity
-        uses: game-ci/unity-builder@v4
-        env:
-          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
-          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
-          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
-        with:
-          projectPath: .
-          unityVersion: auto
-          targetPlatform: Android
-          androidExportType: androidPackage
-          buildMethod: GTAHorizon.EditorBuild.BuildAndroid
-          buildsPath: build
-          buildName: GTA-HORIZON
-      - name: Upload APK artifact
+      - name: Validate Unreal Engine and Android SDK
+        shell: pwsh
+        run: |
+          if ([string]::IsNullOrWhiteSpace($env:UE_ROOT)) { throw "Set UE_ROOT to the installed Unreal Engine 5.8 directory." }
+          $uat = Join-Path $env:UE_ROOT "Engine/Build/BatchFiles/RunUAT.bat"
+          if (!(Test-Path $uat)) { throw "RunUAT.bat not found under UE_ROOT." }
+          if ([string]::IsNullOrWhiteSpace($env:ANDROID_HOME) -and [string]::IsNullOrWhiteSpace($env:ANDROID_SDK_ROOT)) {
+            throw "Android SDK missing. Install UE 5.8 toolchain: SDK 35, NDK r27c, JDK 21."
+          }
+          Write-Host "Using Unreal Engine at $env:UE_ROOT"
+      - name: Package Android ARM64
+        shell: pwsh
+        run: |
+          $uat = Join-Path $env:UE_ROOT "Engine/Build/BatchFiles/RunUAT.bat"
+          $project = Join-Path $PWD "GTAHorizon.uproject"
+          $archive = Join-Path $PWD "dist"
+          & $uat BuildCookRun "-project=$project" -noP4 -platform=Android -clientconfig=Development -cook -build -stage -pak -archive "-archivedirectory=$archive" -utf8output
+          if ($LASTEXITCODE -ne 0) { throw "Unreal BuildCookRun failed with exit code $LASTEXITCODE" }
+          $apk = Get-ChildItem -Path $archive -Filter *.apk -Recurse | Select-Object -First 1
+          if (!$apk) { throw "No APK found in $archive" }
+          Copy-Item $apk.FullName (Join-Path $PWD "GTA-HORIZON-0.1-Android.apk") -Force
+      - name: Upload Android APK
         uses: actions/upload-artifact@v4
         with:
-          name: GTA-HORIZON-Android-0.1
-          path: build/android/GTA-HORIZON.apk
+          name: GTA-HORIZON-UE5.8-Android-0.1
+          path: GTA-HORIZON-0.1-Android.apk
           if-no-files-found: error
           retention-days: 14
