@@ -1,5 +1,6 @@
 #include "HorizonVehicle.h"
 #include "Camera/CameraComponent.h"
+#include "Components/SceneComponent.h"
 #include "Components/StaticMeshComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "UObject/ConstructorHelpers.h"
@@ -11,44 +12,50 @@ AHorizonVehicle::AHorizonVehicle()
     PrimaryActorTick.bCanEverTick = true;
     static ConstructorHelpers::FObjectFinder<UStaticMesh> CubeMesh(TEXT("/Engine/BasicShapes/Cube.Cube"));
     static ConstructorHelpers::FObjectFinder<UStaticMesh> CylinderMesh(TEXT("/Engine/BasicShapes/Cylinder.Cylinder"));
+
+    SceneRoot = CreateDefaultSubobject<USceneComponent>(TEXT("SceneRoot"));
+    SetRootComponent(SceneRoot);
     VehicleBody = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("VehicleBody"));
-    SetRootComponent(VehicleBody);
+    VehicleBody->SetupAttachment(SceneRoot);
     if (CubeMesh.Succeeded()) VehicleBody->SetStaticMesh(CubeMesh.Object);
     VehicleBody->SetRelativeScale3D(FVector(4.5f, 2.15f, .75f));
     VehicleBody->SetCollisionProfileName(TEXT("BlockAll"));
-    ApplyTint(VehicleBody, FLinearColor(0.018f, 0.055f, 0.11f));
+    ApplyTint(VehicleBody, FLinearColor(.018f,.055f,.11f));
+
     UStaticMeshComponent* Cabin = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Cabin"));
-    Cabin->SetupAttachment(VehicleBody);
+    Cabin->SetupAttachment(SceneRoot);
     if (CubeMesh.Succeeded()) Cabin->SetStaticMesh(CubeMesh.Object);
-    Cabin->SetRelativeLocation(FVector(-.15f, 0.f, .72f));
-    Cabin->SetRelativeScale3D(FVector(2.2f, 1.55f, .72f));
+    Cabin->SetRelativeLocation(FVector(-15.f,0.f,72.f));
+    Cabin->SetRelativeScale3D(FVector(2.2f,1.55f,.72f));
     Cabin->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-    ApplyTint(Cabin, FLinearColor(0.045f, 0.18f, 0.25f));
+    ApplyTint(Cabin, FLinearColor(.045f,.18f,.25f));
+
     const FVector WheelPositions[] = {
-        FVector(1.35f, -1.05f, -0.18f), FVector(1.35f, 1.05f, -0.18f),
-        FVector(-1.35f, -1.05f, -0.18f), FVector(-1.35f, 1.05f, -0.18f)
+        FVector(135.f,-105.f,-18.f), FVector(135.f,105.f,-18.f),
+        FVector(-135.f,-105.f,-18.f), FVector(-135.f,105.f,-18.f)
     };
-    for (int32 Index = 0; Index < 4; ++Index)
+    for (int32 Index=0; Index<4; ++Index)
     {
-        UStaticMeshComponent* Wheel = CreateDefaultSubobject<UStaticMeshComponent>(*FString::Printf(TEXT("Wheel_%d"), Index));
-        Wheel->SetupAttachment(VehicleBody);
+        UStaticMeshComponent* Wheel = CreateDefaultSubobject<UStaticMeshComponent>(*FString::Printf(TEXT("Wheel_%d"),Index));
+        Wheel->SetupAttachment(SceneRoot);
         if (CylinderMesh.Succeeded()) Wheel->SetStaticMesh(CylinderMesh.Object);
         Wheel->SetRelativeLocation(WheelPositions[Index]);
-        Wheel->SetRelativeRotation(FRotator(90.f, 0.f, 0.f));
-        Wheel->SetRelativeScale3D(FVector(.43f,.20f,.43f));
+        Wheel->SetRelativeRotation(FRotator(90.f,0.f,0.f));
+        Wheel->SetRelativeScale3D(FVector(43.f,20.f,43.f));
         Wheel->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-        ApplyTint(Wheel, FLinearColor(.008f,.01f,.015f));
+        ApplyTint(Wheel,FLinearColor(.008f,.01f,.015f));
         Wheels.Add(Wheel);
     }
+
     CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("VehicleCameraBoom"));
-    CameraBoom->SetupAttachment(VehicleBody);
+    CameraBoom->SetupAttachment(SceneRoot);
     CameraBoom->TargetArmLength = 720.f;
     CameraBoom->SocketOffset = FVector(0.f,0.f,180.f);
     CameraBoom->bUsePawnControlRotation = true;
     CameraBoom->bEnableCameraLag = true;
     CameraBoom->CameraLagSpeed = 5.f;
     VehicleCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("VehicleCamera"));
-    VehicleCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName);
+    VehicleCamera->SetupAttachment(CameraBoom,USpringArmComponent::SocketName);
     VehicleCamera->bUsePawnControlRotation = false;
 }
 void AHorizonVehicle::ApplyTint(UStaticMeshComponent* Component,const FLinearColor& Color)
