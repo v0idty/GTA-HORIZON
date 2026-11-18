@@ -71,13 +71,13 @@ void AHorizonCity::BuildCityBlockout()
     {
         const float Y = -12500.f + Index * 950.f;
         AddBlock(FName(*FString::Printf(TEXT("PalmTrunk_%d"), Index)),
-            FVector(-9000.f, Y, 155.f), FVector(.22f,.22f,3.1f), FLinearColor(.28f,.13f,.055f));
+            FVector(-9000.f, Y, 85.f), FVector(.22f,.22f,3.1f), FLinearColor(.28f,.13f,.055f));
         if (SphereMesh)
         {
             UStaticMeshComponent* Crown = NewObject<UStaticMeshComponent>(this);
             Crown->SetupAttachment(SceneRoot);
             Crown->SetStaticMesh(SphereMesh);
-            Crown->SetRelativeLocation(FVector(-9000.f, Y, 360.f));
+            Crown->SetRelativeLocation(FVector(-9000.f, Y, 290.f));
             Crown->SetRelativeScale3D(FVector(1.7f,1.7f,.55f));
             Crown->SetCollisionEnabled(ECollisionEnabled::NoCollision);
             Crown->RegisterComponent();
