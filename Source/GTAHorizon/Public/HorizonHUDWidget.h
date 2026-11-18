@@ -9,7 +9,7 @@ class GTAHORIZON_API UHorizonHUDWidget : public UUserWidget
 protected:
     virtual void NativeConstruct() override;
 private:
-    bool bForward=false, bBack=false, bLeft=false, bRight=false;
+    bool bForward=false, bBack=false, bLeft=false, bRight=false, bBrake=false;
     void RefreshTouchInput();
     UFUNCTION() void ForwardPressed();
     UFUNCTION() void ForwardReleased();
@@ -19,6 +19,8 @@ private:
     UFUNCTION() void LeftReleased();
     UFUNCTION() void RightPressed();
     UFUNCTION() void RightReleased();
+    UFUNCTION() void BrakePressed();
+    UFUNCTION() void BrakeReleased();
     UFUNCTION() void JumpClicked();
     UFUNCTION() void VehicleClicked();
 };
