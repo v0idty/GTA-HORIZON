@@ -34,7 +34,10 @@ void AHorizonPlayerController::StartFreeRoam()
     HUDWidget = CreateWidget<UHorizonHUDWidget>(this, UHorizonHUDWidget::StaticClass());
     if (HUDWidget) HUDWidget->AddToViewport(5);
     SetShowMouseCursor(false);
-    SetInputMode(FInputModeGameOnly());
+    FInputModeGameAndUI Mode;
+    if (HUDWidget) Mode.SetWidgetToFocus(HUDWidget->TakeWidget());
+    Mode.SetHideCursorDuringCapture(true);
+    SetInputMode(Mode);
 }
 void AHorizonPlayerController::ToggleVehicle()
 {
@@ -52,7 +55,6 @@ void AHorizonPlayerController::ToggleVehicle()
         }
         return;
     }
-
     AHorizonCharacter* Character = Cast<AHorizonCharacter>(GetPawn());
     if (!Character) return;
     AHorizonVehicle* NearestVehicle = nullptr;
