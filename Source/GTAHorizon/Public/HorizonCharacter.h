@@ -4,7 +4,7 @@
 #include "HorizonCharacter.generated.h"
 class USpringArmComponent;
 class UCameraComponent;
-
+class UStaticMeshComponent;
 UCLASS()
 class GTAHORIZON_API AHorizonCharacter : public ACharacter
 {
@@ -21,9 +21,8 @@ protected:
     void TurnCamera(float Value);
     void LookCamera(float Value);
 private:
-    UPROPERTY(VisibleAnywhere, Category="Camera")
-    TObjectPtr<USpringArmComponent> CameraBoom;
-    UPROPERTY(VisibleAnywhere, Category="Camera")
-    TObjectPtr<UCameraComponent> FollowCamera;
+    UPROPERTY(VisibleAnywhere, Category="Camera") TObjectPtr<USpringArmComponent> CameraBoom;
+    UPROPERTY(VisibleAnywhere, Category="Camera") TObjectPtr<UCameraComponent> FollowCamera;
+    UPROPERTY(VisibleAnywhere, Category="Visual") TObjectPtr<UStaticMeshComponent> BodyVisual;
     FVector2D TouchMove = FVector2D::ZeroVector;
 };
