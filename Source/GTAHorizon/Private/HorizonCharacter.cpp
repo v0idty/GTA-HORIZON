@@ -4,13 +4,29 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Components/CapsuleComponent.h"
+#include "Components/StaticMeshComponent.h"
 #include "GameFramework/Controller.h"
-#include "InputCoreTypes.h"
+#include "UObject/ConstructorHelpers.h"
+#include "Materials/MaterialInstanceDynamic.h"
 
 AHorizonCharacter::AHorizonCharacter()
 {
     PrimaryActorTick.bCanEverTick = true;
     GetCapsuleComponent()->InitCapsuleSize(42.f, 96.f);
+
+    static ConstructorHelpers::FObjectFinder<UStaticMesh> BodyMeshAsset(TEXT("/Engine/BasicShapes/Capsule.Capsule"));
+    BodyVisual = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("BodyVisual"));
+    BodyVisual->SetupAttachment(RootComponent);
+    if (BodyMeshAsset.Succeeded()) BodyVisual->SetStaticMesh(BodyMeshAsset.Object);
+    BodyVisual->SetRelativeLocation(FVector(0.f,0.f,-5.f));
+    BodyVisual->SetRelativeScale3D(FVector(.72f,.72f,.95f));
+    BodyVisual->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+    if (UMaterialInstanceDynamic* MID = BodyVisual->CreateAndSetMaterialInstanceDynamic(0))
+    {
+        MID->SetVectorParameterValue(TEXT("BaseColor"), FLinearColor(.08f,.45f,.72f));
+        MID->SetVectorParameterValue(TEXT("Color"), FLinearColor(.08f,.45f,.72f));
+    }
+
     CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
     CameraBoom->SetupAttachment(RootComponent);
     CameraBoom->TargetArmLength = 430.f;
@@ -21,6 +37,7 @@ AHorizonCharacter::AHorizonCharacter()
     FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
     FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName);
     FollowCamera->bUsePawnControlRotation = false;
+
     bUseControllerRotationYaw = false;
     GetCharacterMovement()->bOrientRotationToMovement = true;
     GetCharacterMovement()->RotationRate = FRotator(0.f, 560.f, 0.f);
@@ -66,6 +83,5 @@ void AHorizonCharacter::LookCamera(float Value) { AddControllerPitchInput(Value)
 void AHorizonCharacter::SetTouchMove(FVector2D Value) { TouchMove = Value.GetClampedToMaxSize(1.f); }
 void AHorizonCharacter::InteractWithVehicle()
 {
-    if (AHorizonPlayerController* PC = Cast<AHorizonPlayerController>(GetController()))
-        PC->ToggleVehicle();
+    if (AHorizonPlayerController* PC = Cast<AHorizonPlayerController>(GetController())) PC->ToggleVehicle();
 }
