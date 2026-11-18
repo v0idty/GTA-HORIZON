@@ -56,7 +56,7 @@ void AHorizonCity::BuildCityBlockout()
         {
             if (FMath::Abs(X) <= 1) continue;
             const float Height = Random.FRandRange(900.f, 4200.f);
-            const FVector Location(X * 1900.f, Z * 1900.f, Height * .5f - 30.f);
+            const FVector Location(X * 1900.f, Z * 1900.f, Height * .5f - 70.f);
             const FVector Scale(Random.FRandRange(5.f, 9.f), Random.FRandRange(5.f, 9.f), Height / 100.f);
             const FLinearColor Facade(Random.FRandRange(.08f,.22f), Random.FRandRange(.12f,.25f), Random.FRandRange(.18f,.34f), 1.f);
             AddBlock(FName(*FString::Printf(TEXT("Tower_%d_%d"), X, Z)), Location, Scale, Facade);
@@ -71,13 +71,13 @@ void AHorizonCity::BuildCityBlockout()
     {
         const float Y = -12500.f + Index * 950.f;
         AddBlock(FName(*FString::Printf(TEXT("PalmTrunk_%d"), Index)),
-            FVector(-9000.f, Y, 310.f), FVector(.22f,.22f,3.1f), FLinearColor(.28f,.13f,.055f));
+            FVector(-9000.f, Y, 155.f), FVector(.22f,.22f,3.1f), FLinearColor(.28f,.13f,.055f));
         if (SphereMesh)
         {
             UStaticMeshComponent* Crown = NewObject<UStaticMeshComponent>(this);
             Crown->SetupAttachment(SceneRoot);
             Crown->SetStaticMesh(SphereMesh);
-            Crown->SetRelativeLocation(FVector(-9000.f, Y, 680.f));
+            Crown->SetRelativeLocation(FVector(-9000.f, Y, 360.f));
             Crown->SetRelativeScale3D(FVector(1.7f,1.7f,.55f));
             Crown->SetCollisionEnabled(ECollisionEnabled::NoCollision);
             Crown->RegisterComponent();
