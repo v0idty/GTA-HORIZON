@@ -1,41 +1,38 @@
-# GTA HORIZON — Version 0.1
+# GTA HORIZON — Unreal Engine 5.8
 
-**A City Without Limits.** An original mobile open-world prototype built with Unity 6 and C#.
+**A City Without Limits.** An original mobile open-world prototype using Unreal Engine 5.8 and C++.
 
-This is an independent fan-made learning project. It is not affiliated with Rockstar Games and contains no GTA source code, maps, characters, music, or proprietary assets.
+This is an independent fan-made project. It is not affiliated with Rockstar Games and does not include GTA source code, maps, characters, music, or proprietary assets.
 
-## Prototype features
-- Runtime-generated coastal city blockout.
-- Third-person player movement and follow camera.
-- Enter/exit a simple drivable vehicle.
-- Arcade vehicle movement.
-- Android touch controls and keyboard fallback.
-- Main menu and title screen.
-- Android ARM64 build workflow.
+## Current C++ prototype
+- UE 5.8 project descriptor and game/editor targets.
+- Third-person character movement and follow camera.
+- Basic arcade-style vehicle pawn with enter/exit possession.
+- Procedurally generated coastal-city graybox.
+- Native C++ main menu and touch HUD.
+- Android ARM64 package configuration.
+- GitHub Actions workflow for a preconfigured Unreal build runner.
 
-## Toolchain
-- Unity 6 (Editor version pinned in `ProjectSettings/ProjectVersion.txt`)
-- Universal Render Pipeline (URP)
-- C# gameplay
-- Optional native C++ sample in `Native/Android`; it is not required by the game.
+## Open in Unreal Engine
+Install Unreal Engine 5.8 and the Android toolchain on a supported Windows development machine, then open GTAHorizon.uproject. Compile the GTAHorizon module when prompted.
 
-## Open in Unity
-Install Unity Hub with the matching Unity Editor and Android Build Support (SDK, NDK, OpenJDK). Open this repository as a Unity project. The editor helper creates a boot scene and configures the mobile URP pipeline.
+## Android toolchain
+Epic's UE 5.8 Android documentation lists Android SDK 35, NDK r27c, and JDK 21 as the relevant current toolchain versions. Use Turnkey or Epic's documented setup process to install the matching versions.
 
-## GitHub Actions APK build
-Workflow: `.github/workflows/build-android.yml`
+## GitHub Actions build
+Workflow: .github/workflows/build-android.yml
 
-Add these repository Actions secrets:
-- `UNITY_LICENSE`: contents of your Unity license file.
-- `UNITY_EMAIL`: Unity account email.
-- `UNITY_PASSWORD`: only if required by your GameCI license activation method.
+Important: GitHub-hosted runners do not ship with Unreal Engine. This workflow deliberately targets a self-hosted Windows runner with:
+- Unreal Engine 5.8 installed and licensed.
+- Visual Studio 2022 C++ game-development tools.
+- Android SDK 35, NDK r27c, OpenJDK 21.
+- Runner labels ue-5.8 and android.
+- UE_ROOT environment variable pointing to the UE installation.
+- ANDROID_HOME or ANDROID_SDK_ROOT configured.
 
-Never commit license credentials. Then run **Actions → GTA HORIZON - Android APK → Run workflow**. The APK is uploaded as the `GTA-HORIZON-Android-0.1` artifact.
+See Docs/BUILD-ANDROID.md. Without this runner, the APK job cannot run; repository files alone cannot compile Unreal Engine.
 
-## Controls
-- WASD / arrow keys or on-screen controls: move / steer.
-- E or ACTION: enter / exit nearby car.
-- Space: brake while driving.
+## Prototype limits
+This is an early graybox foundation, not an AAA game and not a GTA 6 port. The city uses engine primitive meshes. Production assets, vehicle physics tuning, animation, traffic AI, pedestrian AI, missions, save data, weather, audio, and real-device profiling remain future milestones.
 
-## Honest scope
-This is a first playable foundation, not a GTA 6 port or AAA production. The initial city uses procedural primitives. High-detail original models, animation, audio, missions, save systems, advanced AI, and real-device profiling are future milestones. C++ is not inherently easier or faster than C#; use native code only for measured bottlenecks.
+C++ is the main gameplay language. We will add native performance work only when profiling proves it is needed.
