@@ -2,6 +2,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Pawn.h"
 #include "HorizonVehicle.generated.h"
+class USceneComponent;
 class UStaticMeshComponent;
 class USpringArmComponent;
 class UCameraComponent;
@@ -20,6 +21,7 @@ private:
     void SetSteering(float Value);
     void SetBrake(float Value);
     void ApplyTint(UStaticMeshComponent* Component, const FLinearColor& Color);
+    UPROPERTY(VisibleAnywhere) TObjectPtr<USceneComponent> SceneRoot;
     UPROPERTY(VisibleAnywhere) TObjectPtr<UStaticMeshComponent> VehicleBody;
     UPROPERTY(VisibleAnywhere) TObjectPtr<USpringArmComponent> CameraBoom;
     UPROPERTY(VisibleAnywhere) TObjectPtr<UCameraComponent> VehicleCamera;
