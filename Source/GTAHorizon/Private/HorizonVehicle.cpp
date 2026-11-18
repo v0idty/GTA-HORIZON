@@ -41,7 +41,7 @@ AHorizonVehicle::AHorizonVehicle()
         if (CylinderMesh.Succeeded()) Wheel->SetStaticMesh(CylinderMesh.Object);
         Wheel->SetRelativeLocation(WheelPositions[Index]);
         Wheel->SetRelativeRotation(FRotator(90.f,0.f,0.f));
-        Wheel->SetRelativeScale3D(FVector(43.f,20.f,43.f));
+        Wheel->SetRelativeScale3D(FVector(.43f,.20f,.43f));
         Wheel->SetCollisionEnabled(ECollisionEnabled::NoCollision);
         ApplyTint(Wheel,FLinearColor(.008f,.01f,.015f));
         Wheels.Add(Wheel);
