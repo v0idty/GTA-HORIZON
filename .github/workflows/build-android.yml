@@ -1,0 +1,41 @@
+name: GTA HORIZON - Android APK
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+    paths:
+      - 'Assets/**'
+      - 'Packages/**'
+      - 'ProjectSettings/**'
+      - '.github/workflows/build-android.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  build-android:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build Android APK with Unity
+        uses: game-ci/unity-builder@v4
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+        with:
+          projectPath: .
+          unityVersion: auto
+          targetPlatform: Android
+          androidExportType: androidPackage
+          buildMethod: GTAHorizon.EditorBuild.BuildAndroid
+          buildsPath: build
+          buildName: GTA-HORIZON
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: GTA-HORIZON-Android-0.1
+          path: build/android/GTA-HORIZON.apk
+          if-no-files-found: error
+          retention-days: 14
